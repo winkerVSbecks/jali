@@ -1,0 +1,19 @@
+{
+  "name": "jali",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "figplug build -O",
+    "start": "figplug build -w"
+  },
+  "keywords": [],
+  "author": "winkerVSbecks",
+  "license": "ISC",
+  "dependencies": {
+    "canvas-sketch-util": "^1.10.0",
+    "figplug": "^0.1.17",
+    "tslint": "^6.1.1"
+  }
+}
