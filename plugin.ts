@@ -5,7 +5,7 @@ figma.showUI(__html__, { width: 300, height: 260 });
 
 figma.ui.onmessage = msg => {
   if (msg.type === 'create-jali') {
-    main(msg.count, msg.resolution, msg.stroke, msg.tileType).then(
+    main(msg.count, msg.resolution, msg.stroke, msg.tileType, msg.frame).then(
       () => { },
       (error) => {
         figma.ui.postMessage({ type: 'error', value: error });
@@ -17,7 +17,7 @@ figma.ui.onmessage = msg => {
 
 type TileType = 'crossOverArcs' | 'arcs' | 'diagonals' | 'diagonalMesh' | 'overlappingArcs' | 'arcSweeps';
 
-function main(curveCount: number = 2, resolution: number = 10, strokeWeight: number = 4, tileType: TileType): Promise<string | undefined> {
+function main(curveCount: number = 2, resolution: number = 10, strokeWeight: number = 4, tileType: TileType, windowFrame: boolean): Promise<string | undefined> {
   // Make sure the selection is a single piece of text before proceeding.
   if (figma.currentPage.selection.length !== 1) {
     return Promise.reject("error: select just one frame");
@@ -46,7 +46,6 @@ function main(curveCount: number = 2, resolution: number = 10, strokeWeight: num
     arcs: arcs,
     diagonals: diagonals,
     diagonalMesh: diagonalMesh,
-    overlappingArcs: overlappingArcs,
     arcSweeps: arcSweeps(curveCount),
   };
 
@@ -60,14 +59,16 @@ function main(curveCount: number = 2, resolution: number = 10, strokeWeight: num
   const lines = pathsToPolylines(paths, { units: 'px' });
   const meshNodes: VectorNode[] = [];
 
-  // Create the outline
-  const jaliNode = jali([s, s], [width - s, height - s], strokeWeight);
-  frameNode.appendChild(jaliNode);
-  // Create the outline mask
-  const maskNode = jaliNode.clone();
-  maskNode.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
-  maskNode.isMask = true;
-  frameNode.appendChild(maskNode);
+  if (windowFrame) {
+    // Create the outline
+    const jaliNode = jali([s, s], [width - s, height - s], strokeWeight);
+    frameNode.appendChild(jaliNode);
+    // Create the outline mask
+    const maskNode = jaliNode.clone();
+    maskNode.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
+    maskNode.isMask = true;
+    frameNode.appendChild(maskNode);
+  }
 
   // Render the mesh
   lines.forEach(path => {
@@ -231,41 +232,6 @@ const diagonalMesh = [
     p.lineTo(x + s / 2, y + s);
     p.moveTo(x, y + s / 2);
     p.lineTo(x + s, y + s / 2);
-    return p;
-  },
-];
-
-const overlappingArcs = [
-  function ([x, y], s) {
-    const r = s / 4;
-    const p = createPath();
-    p.arc(x, y, r, 0, Math.PI / 2);
-    p.moveTo(x + 2 * r, y);
-    p.arc(x, y, r * 2, 0, Math.PI / 2);
-    p.moveTo(x + 3 * r, y);
-    p.arc(x, y, r * 3, 0, Math.PI / 2);
-    p.moveTo(x + s - r, y + s);
-    p.arc(x + s, y + s, r, Math.PI, (3 * Math.PI) / 2);
-    p.moveTo(x + s - 2 * r, y + s);
-    p.arc(x + s, y + s, r * 2, Math.PI, (3 * Math.PI) / 2);
-    p.moveTo(x + s - 3 * r, y + s);
-    p.arc(x + s, y + s, r * 3, Math.PI, (3 * Math.PI) / 2);
-    return p;
-  },
-  function ([x, y], s) {
-    const r = s / 4;
-    const p = createPath();
-    p.arc(x + s, y, r, Math.PI / 2, Math.PI);
-    p.moveTo(x + s, y + 2 * r);
-    p.arc(x + s, y, r * 2, Math.PI / 2, Math.PI);
-    p.moveTo(x + s, y + 3 * r);
-    p.arc(x + s, y, r * 3, Math.PI / 2, Math.PI);
-    p.moveTo(x + r, y + s);
-    p.arc(x, y + s, r, (3 * Math.PI) / 2, 2 * Math.PI);
-    p.moveTo(x + 2 * r, y + s);
-    p.arc(x, y + s, r * 2, (3 * Math.PI) / 2, 2 * Math.PI);
-    p.moveTo(x + 3 * r, y + s);
-    p.arc(x, y + s, r * 3, (3 * Math.PI) / 2, 2 * Math.PI);
     return p;
   },
 ];

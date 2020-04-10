@@ -2,5 +2,6 @@
   "api": "1.0.0",
   "name": "Jali",
   "main": "plugin.ts",
-  "ui": "ui.ts"
+  "ui": "ui.ts",
+  "id": "830523897419272248"
 }

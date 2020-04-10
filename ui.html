@@ -282,9 +282,13 @@
       <option value="arcs">Arcs</option>
       <option value="diagonals">Diagonals</option>
       <option value="diagonalMesh">Diagonal mesh</option>
-      <option value="overlappingArcs">Overlapping arcs</option>
       <option value="arcSweeps" selected="selected">Arc sweeps</option>
     </select>
+  </div>
+
+  <div class="checkbox mb1">
+    <input class="checkbox__box" type="checkbox" id="frame" checked />
+    <label class="checkbox__label" for="frame">Window Frame</label>
   </div>
 
   <div class="input-icon">
@@ -310,7 +314,7 @@
       id="resolution"
       class="input-icon__input"
       value="20"
-      placeholder="curve count"
+      placeholder="grid resolution"
       min="1"
     />
   </div>
@@ -324,7 +328,7 @@
       id="stroke"
       class="input-icon__input"
       value="4"
-      placeholder="curve count"
+      placeholder="stroke weight"
       min="1"
     />
   </div>
@@ -339,5 +343,6 @@
 
   <script>
     selectMenu.init();
+    document.getElementById('count').focus();
   </script>
 </body>
