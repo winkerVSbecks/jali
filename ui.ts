@@ -13,6 +13,8 @@ document.getElementById('create')!.onclick = () => {
   const strokeTextbox = document.getElementById('stroke')! as HTMLInputElement;
   const tileTypeSelect = document.getElementById('tile-type')! as HTMLSelectElement;
   const frameCheckbox = document.getElementById('frame')! as HTMLInputElement;
+  const error = document.getElementById('error')! as HTMLDivElement;
+  const errorMsg = document.getElementById('error-msg')! as HTMLSpanElement;
 
   const count = parseInt(countTextbox.value, 10);
   const resolution = parseInt(resolutionTextbox.value, 10);
@@ -20,7 +22,19 @@ document.getElementById('create')!.onclick = () => {
   const tileType = tileTypeSelect.value;
   const frame = frameCheckbox.checked;
 
-  parent.postMessage({ pluginMessage: { type: 'create-jali', count, resolution, stroke, tileType, frame } }, '*');
+  parent.postMessage({
+    pluginMessage: {
+      type: 'create-jali',
+      count,
+      resolution,
+      stroke,
+      tileType,
+      frame,
+    }
+  }, '*');
+
+  error.style.display = 'none';
+  errorMsg.textContent = '';
 };
 
 document.getElementById('select-tiles')!.onclick = () => {
@@ -31,11 +45,14 @@ onmessage = (event) => {
   const message = event.data.pluginMessage;
 
   if (message.type === 'error') {
-    const error = document.getElementById('error')! as HTMLInputElement;
-    const errorMsg = document.getElementById('error-msg')! as HTMLInputElement;
+    const error = document.getElementById('error')! as HTMLDivElement;
+    const errorMsg = document.getElementById('error-msg')! as HTMLSpanElement;
     error.style.display = 'flex';
-
     errorMsg.textContent = message.value;
   }
-}
+
+  if (message.type === 'tiles-selected') {
+    document.getElementById('selected-tiles-msg')!.textContent = message.value;
+  }
+};
 

@@ -287,11 +287,6 @@
     </select>
   </div>
 
-  <div class="checkbox mb1">
-    <input class="checkbox__box" type="checkbox" id="frame" checked />
-    <label class="checkbox__label" for="frame">Window Frame</label>
-  </div>
-
   <div class="input-icon">
     <div class="input-icon__icon">
       <div class="icon icon--adjust icon--black-3"></div>
@@ -334,6 +329,11 @@
     />
   </div>
 
+  <div class="checkbox mb1">
+    <input class="checkbox__box" type="checkbox" id="frame" checked />
+    <label class="checkbox__label" for="frame">Window Frame</label>
+  </div>
+
   <div class="mb2">
     <button class="button button--primary" id="create">Generate</button>
     <button
@@ -345,7 +345,13 @@
     </button>
   </div>
 
-  <div id="error" class="visual-bell visual-bell--error" style="display: none;">
+  <p id="selected-tiles-msg" class="type type--pos-small-normal"></p>
+
+  <div
+    id="error"
+    class="visual-bell visual-bell--error mt1"
+    style="display: none;"
+  >
     <span id="error-msg" class="visual-bell__msg"></span>
   </div>
 

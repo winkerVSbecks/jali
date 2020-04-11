@@ -3,15 +3,26 @@ import Random from 'canvas-sketch-util/random';
 
 figma.showUI(__html__, { width: 300, height: 300 });
 
-let tiles: SceneNode[] = [];
+let tiles: readonly SceneNode[] = [];
 
 figma.ui.onmessage = msg => {
   if (msg.type === 'select-tiles') {
     selectTiles()
       .then(
-        (_tiles) => tiles = _tiles,
+        (_tiles) => {
+          tiles = _tiles;
+
+          figma.ui.postMessage({
+            type: 'tiles-selected',
+            value: `${tiles.length} tile${tiles.length > 1 ? 's' : ''} selected`,
+          });
+        },
         (error) => {
           figma.ui.postMessage({ type: 'error', value: error });
+          figma.ui.postMessage({
+            type: 'tiles-selected',
+            value: 'no tiles selected',
+          });
         });
   } else if (msg.type === 'create-jali') {
     main(msg.count, msg.resolution, msg.stroke, msg.tileType, msg.frame, tiles)
@@ -27,24 +38,22 @@ figma.ui.onmessage = msg => {
 
 type TileType = 'crossOverArcs' | 'arcs' | 'diagonals' | 'diagonalMesh' | 'overlappingArcs' | 'arcSweeps' | 'customTiles';
 
-function selectTiles(): Promise<SceneNode[]> {
+function selectTiles(): Promise<readonly SceneNode[]> {
   if (figma.currentPage.selection.length === 0) {
     return Promise.reject("error: select at least one path");
   }
 
-  const selection = figma.currentPage.selection;
+  const tiles = figma.currentPage.selection;
 
-  const validTiles = selection.reduce((acc, node) => acc && node.type === 'VECTOR', true);
+  const validTiles = tiles.reduce((acc, node) => acc && node.type === 'VECTOR', true);
 
   if (!validTiles) {
     return Promise.reject("error: tiles can only be vectors");
   }
-
-  const tiles = selection.map(node => node.clone());
   return Promise.resolve(tiles);
 }
 
-function main(curveCount: number = 2, resolution: number = 10, strokeWeight: number = 4, tileType: TileType, windowFrame: boolean, customTiles?: SceneNode[]): Promise<string | undefined> {
+function main(curveCount: number = 2, resolution: number = 10, strokeWeight: number = 4, tileType: TileType, windowFrame: boolean, customTiles?: readonly SceneNode[]): Promise<string | undefined> {
   // Make sure the selection is a single piece of text before proceeding.
   if (figma.currentPage.selection.length !== 1) {
     return Promise.reject("error: select a frame to render into");
@@ -90,8 +99,6 @@ function main(curveCount: number = 2, resolution: number = 10, strokeWeight: num
   };
 
   if (tileType === 'customTiles') {
-    console.log(customTiles);
-
     for (let x = 0; x < width; x += s) {
       for (let y = 0; y < height; y += s) {
         const tile = Random.pick(customTiles);
