@@ -283,6 +283,7 @@
       <option value="diagonals">Diagonals</option>
       <option value="diagonalMesh">Diagonal mesh</option>
       <option value="arcSweeps" selected="selected">Arc sweeps</option>
+      <option value="customTiles">Custom Tiles</option>
     </select>
   </div>
 
@@ -334,7 +335,14 @@
   </div>
 
   <div class="mb2">
-    <button class="button button--secondary" id="create">Create</button>
+    <button class="button button--primary" id="create">Generate</button>
+    <button
+      style="display: none;"
+      class="button button--secondary ml1"
+      id="select-tiles"
+    >
+      Select Custom Tiles
+    </button>
   </div>
 
   <div id="error" class="visual-bell visual-bell--error" style="display: none;">

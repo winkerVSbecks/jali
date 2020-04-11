@@ -129,28 +129,6 @@ body {
   }
 }
 
-.m1 {
-  margin: 8px;
-}
-.mb1 {
-  margin-bottom: 8px;
-}
-.mx1 {
-  margin-left: 8px;
-  margin-right: 8px;
-}
-
-.m2 {
-  margin: 16px;
-}
-.mb2 {
-  margin-bottom: 16px;
-}
-.mx2 {
-  margin-left: 16px;
-  margin-right: 16px;
-}
-
 /* Figma Plugin UI CSS */
 * {
   -webkit-box-sizing: border-box;
@@ -1790,4 +1768,34 @@ body {
 
 .icon--warning {
   background-image: url('data:image/svg+xml,%3Csvg fill="none" height="128" viewBox="0 0 32 128" width="32" xmlns="http://www.w3.org/2000/svg"%3E%3Cg clip-rule="evenodd" fill-rule="evenodd"%3E%3Cpath d="m16 38 10 18h-20zm-1 11v-4h2v4zm0 2v2h2v-2z" fill="%23000" fill-opacity=".3"/%3E%3Cpath d="m16 6 10 18h-20zm-1 11v-4h2v4zm0 2v2h2v-2z" fill="%23000" fill-opacity=".8"/%3E%3Cpath d="m16 70 10 18h-20zm-1 11v-4h2v4zm0 2v2h2v-2z" fill="%2318a0fb"/%3E%3Cpath d="m16 102 10 18h-20zm-1 11v-4h2v4zm0 2v2h2v-2z" fill="%23fff"/%3E%3C/g%3E%3C/svg%3E');
+}
+
+/* Margin */
+
+.m1 {
+  margin: 8px;
+}
+.mb1 {
+  margin-bottom: 8px;
+}
+.ml1 {
+  margin-left: 8px;
+}
+.mr1 {
+  margin-right: 8px;
+}
+.mx1 {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.m2 {
+  margin: 16px;
+}
+.mb2 {
+  margin-bottom: 16px;
+}
+.mx2 {
+  margin-left: 16px;
+  margin-right: 16px;
 }

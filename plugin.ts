@@ -1,32 +1,59 @@
 import { createPath, pathsToPolylines } from 'canvas-sketch-util/penplot';
 import Random from 'canvas-sketch-util/random';
 
-figma.showUI(__html__, { width: 300, height: 260 });
+figma.showUI(__html__, { width: 300, height: 300 });
+
+let tiles: SceneNode[] = [];
 
 figma.ui.onmessage = msg => {
-  if (msg.type === 'create-jali') {
-    main(msg.count, msg.resolution, msg.stroke, msg.tileType, msg.frame).then(
-      () => { },
-      (error) => {
-        figma.ui.postMessage({ type: 'error', value: error });
-      });
+  if (msg.type === 'select-tiles') {
+    selectTiles()
+      .then(
+        (_tiles) => tiles = _tiles,
+        (error) => {
+          figma.ui.postMessage({ type: 'error', value: error });
+        });
+  } else if (msg.type === 'create-jali') {
+    main(msg.count, msg.resolution, msg.stroke, msg.tileType, msg.frame, tiles)
+      .then(
+        () => { },
+        (error) => {
+          figma.ui.postMessage({ type: 'error', value: error });
+        });
   } else {
     figma.closePlugin();
   }
 }
 
-type TileType = 'crossOverArcs' | 'arcs' | 'diagonals' | 'diagonalMesh' | 'overlappingArcs' | 'arcSweeps';
+type TileType = 'crossOverArcs' | 'arcs' | 'diagonals' | 'diagonalMesh' | 'overlappingArcs' | 'arcSweeps' | 'customTiles';
 
-function main(curveCount: number = 2, resolution: number = 10, strokeWeight: number = 4, tileType: TileType, windowFrame: boolean): Promise<string | undefined> {
+function selectTiles(): Promise<SceneNode[]> {
+  if (figma.currentPage.selection.length === 0) {
+    return Promise.reject("error: select at least one path");
+  }
+
+  const selection = figma.currentPage.selection;
+
+  const validTiles = selection.reduce((acc, node) => acc && node.type === 'VECTOR', true);
+
+  if (!validTiles) {
+    return Promise.reject("error: tiles can only be vectors");
+  }
+
+  const tiles = selection.map(node => node.clone());
+  return Promise.resolve(tiles);
+}
+
+function main(curveCount: number = 2, resolution: number = 10, strokeWeight: number = 4, tileType: TileType, windowFrame: boolean, customTiles?: SceneNode[]): Promise<string | undefined> {
   // Make sure the selection is a single piece of text before proceeding.
   if (figma.currentPage.selection.length !== 1) {
-    return Promise.reject("error: select just one frame");
+    return Promise.reject("error: select a frame to render into");
   }
 
   const frameNode = figma.currentPage.selection[0];
 
   if (frameNode.type !== 'FRAME') {
-    return Promise.reject("error: select a frame");
+    return Promise.reject("error: select a frame to render into");
   }
 
   // Clear contents of the frame
@@ -41,22 +68,6 @@ function main(curveCount: number = 2, resolution: number = 10, strokeWeight: num
   const paths: any[] = [];
   const s = width / resolution;
 
-  const tileTypes = {
-    crossOverArcs: crossOverArcs,
-    arcs: arcs,
-    diagonals: diagonals,
-    diagonalMesh: diagonalMesh,
-    arcSweeps: arcSweeps(curveCount),
-  };
-
-  for (let x = 0; x < width; x += s) {
-    for (let y = 0; y < height; y += s) {
-      const tile = Random.pick(tileTypes[tileType]);
-      paths.push(tile([x, y], s));
-    }
-  }
-
-  const lines = pathsToPolylines(paths, { units: 'px' });
   const meshNodes: VectorNode[] = [];
 
   if (windowFrame) {
@@ -70,12 +81,48 @@ function main(curveCount: number = 2, resolution: number = 10, strokeWeight: num
     frameNode.appendChild(maskNode);
   }
 
-  // Render the mesh
-  lines.forEach(path => {
-    const node = renderPath(path, strokeWeight);
-    frameNode.appendChild(node);
-    meshNodes.push(node);
-  });
+  const tileTypes = {
+    crossOverArcs: crossOverArcs,
+    arcs: arcs,
+    diagonals: diagonals,
+    diagonalMesh: diagonalMesh,
+    arcSweeps: arcSweeps(curveCount),
+  };
+
+  if (tileType === 'customTiles') {
+    console.log(customTiles);
+
+    for (let x = 0; x < width; x += s) {
+      for (let y = 0; y < height; y += s) {
+        const tile = Random.pick(customTiles);
+        const node = tile.clone();
+        node.resize(s, s);
+        node.x = x;
+        node.y = y;
+        node.strokeWeight = strokeWeight;
+        node.strokeJoin = 'ROUND';
+        node.strokeCap = 'ROUND';
+        frameNode.appendChild(node);
+        meshNodes.push(node);
+      }
+    }
+  } else {
+    for (let x = 0; x < width; x += s) {
+      for (let y = 0; y < height; y += s) {
+        const tile = Random.pick(tileTypes[tileType]);
+        paths.push(tile([x, y], s));
+      }
+    }
+
+    const lines = pathsToPolylines(paths, { units: 'px' });
+
+    // Render the mesh
+    lines.forEach(path => {
+      const node = renderPath(path, strokeWeight);
+      frameNode.appendChild(node);
+      meshNodes.push(node);
+    });
+  }
 
   const meshGroup = figma.group(meshNodes, frameNode);
   meshGroup.x = 0;
