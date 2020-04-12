@@ -14,14 +14,14 @@ figma.ui.onmessage = msg => {
 
           figma.ui.postMessage({
             type: 'tiles-selected',
-            value: `${tiles.length} tile${tiles.length > 1 ? 's' : ''} selected`,
+            value: `${tiles.length} custom tile${tiles.length > 1 ? 's' : ''} selected`,
           });
         },
         (error) => {
           figma.ui.postMessage({ type: 'error', value: error });
           figma.ui.postMessage({
             type: 'tiles-selected',
-            value: 'no tiles selected',
+            value: 'no custom tiles selected',
           });
         });
   } else if (msg.type === 'create-jali') {
