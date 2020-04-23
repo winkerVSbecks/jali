@@ -276,84 +276,89 @@
   </script>
 </head>
 <body class="m2">
-  <div class="mb1">
-    <select name="tile-type" id="tile-type" class="select-menu">
-      <option value="crossOverArcs">Cross over arcs</option>
-      <option value="arcs">Arcs</option>
-      <option value="diagonals">Diagonals</option>
-      <option value="diagonalMesh">Diagonal mesh</option>
-      <option value="arcSweeps" selected="selected">Arc sweeps</option>
-      <option value="customTiles">Custom Tiles</option>
-    </select>
-  </div>
-
-  <div class="input-icon">
-    <div class="input-icon__icon">
-      <div class="icon icon--adjust icon--black-3"></div>
+  <form id="form">
+    <div class="mb1">
+      <select name="tile-type" id="tile-type" class="select-menu">
+        <option value="crossOverArcs">Cross over arcs</option>
+        <option value="arcs">Arcs</option>
+        <option value="diagonals">Diagonals</option>
+        <option value="diagonalMesh">Diagonal mesh</option>
+        <option value="arcSweeps" selected="selected">Arc sweeps</option>
+        <option value="customTiles">Custom Tiles</option>
+      </select>
     </div>
-    <input
-      type="number"
-      id="count"
-      class="input-icon__input"
-      value="2"
-      placeholder="curve count"
-      min="1"
-    />
-  </div>
 
-  <div class="input-icon">
-    <div class="input-icon__icon">
-      <div class="icon icon--layout-grid-uniform icon--black-3"></div>
+    <div class="input-icon">
+      <div class="input-icon__icon">
+        <div class="icon icon--adjust icon--black-3"></div>
+      </div>
+      <input
+        type="number"
+        id="count"
+        class="input-icon__input"
+        value="2"
+        placeholder="curve count"
+        min="1"
+        max="10"
+      />
     </div>
-    <input
-      type="number"
-      id="resolution"
-      class="input-icon__input"
-      value="20"
-      placeholder="grid resolution"
-      min="1"
-    />
-  </div>
 
-  <div class="input-icon mb1">
-    <div class="input-icon__icon">
-      <div class="icon icon--stroke-weight icon--black-3"></div>
+    <div class="input-icon">
+      <div class="input-icon__icon">
+        <div class="icon icon--layout-grid-uniform icon--black-3"></div>
+      </div>
+      <input
+        type="number"
+        id="resolution"
+        class="input-icon__input"
+        value="20"
+        placeholder="grid resolution"
+        min="1"
+        max="50"
+      />
     </div>
-    <input
-      type="number"
-      id="stroke"
-      class="input-icon__input"
-      value="4"
-      placeholder="stroke weight"
-      min="1"
-    />
-  </div>
 
-  <div class="checkbox mb1">
-    <input class="checkbox__box" type="checkbox" id="frame" checked />
-    <label class="checkbox__label" for="frame">Window Frame</label>
-  </div>
+    <div class="input-icon mb1">
+      <div class="input-icon__icon">
+        <div class="icon icon--stroke-weight icon--black-3"></div>
+      </div>
+      <input
+        type="number"
+        id="stroke"
+        class="input-icon__input"
+        value="4"
+        placeholder="stroke weight"
+        min="1"
+        max="10"
+      />
+    </div>
 
-  <div class="mb2">
-    <button class="button button--primary" id="create">Generate</button>
-    <button
+    <div class="checkbox mb1">
+      <input class="checkbox__box" type="checkbox" id="frame" checked />
+      <label class="checkbox__label" for="frame">Window Frame</label>
+    </div>
+
+    <div class="mb2">
+      <button class="button button--primary" id="create">Generate</button>
+      <button
+        style="display: none;"
+        class="button button--secondary ml1"
+        id="select-tiles"
+      >
+        Select Custom Tiles
+      </button>
+    </div>
+
+    <p id="selected-tiles-msg" class="type type--pos-small-normal"></p>
+
+    <div
+      id="error"
+      class="visual-bell visual-bell--error mt1"
       style="display: none;"
-      class="button button--secondary ml1"
-      id="select-tiles"
     >
-      Select Custom Tiles
-    </button>
-  </div>
-
-  <p id="selected-tiles-msg" class="type type--pos-small-normal"></p>
-
-  <div
-    id="error"
-    class="visual-bell visual-bell--error mt1"
-    style="display: none;"
-  >
-    <span id="error-msg" class="visual-bell__msg"></span>
-  </div>
+      <span id="error-msg" class="visual-bell__msg"></span>
+    </div>
+  </form>
 
   <script>
     selectMenu.init();

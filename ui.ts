@@ -16,25 +16,33 @@ document.getElementById('create')!.onclick = () => {
   const error = document.getElementById('error')! as HTMLDivElement;
   const errorMsg = document.getElementById('error-msg')! as HTMLSpanElement;
 
-  const count = parseInt(countTextbox.value, 10);
-  const resolution = parseInt(resolutionTextbox.value, 10);
-  const stroke = parseInt(strokeTextbox.value, 10);
-  const tileType = tileTypeSelect.value;
-  const frame = frameCheckbox.checked;
+  if (countTextbox.validity.valid &&
+    resolutionTextbox.validity.valid &&
+    strokeTextbox.validity.valid) {
 
-  parent.postMessage({
-    pluginMessage: {
-      type: 'create-jali',
-      count,
-      resolution,
-      stroke,
-      tileType,
-      frame,
-    }
-  }, '*');
+    const count = parseInt(countTextbox.value, 10);
+    const resolution = parseInt(resolutionTextbox.value, 10);
+    const stroke = parseInt(strokeTextbox.value, 10);
+    const tileType = tileTypeSelect.value;
+    const frame = frameCheckbox.checked;
 
-  error.style.display = 'none';
-  errorMsg.textContent = '';
+    parent.postMessage({
+      pluginMessage: {
+        type: 'create-jali',
+        count,
+        resolution,
+        stroke,
+        tileType,
+        frame,
+      }
+    }, '*');
+
+    error.style.display = 'none';
+    errorMsg.textContent = '';
+  } else {
+    error.style.display = 'flex';
+    errorMsg.textContent = 'error: please enter a valid value';
+  }
 };
 
 document.getElementById('select-tiles')!.onclick = () => {
